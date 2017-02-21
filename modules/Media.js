@@ -25,6 +25,16 @@ class Media extends React.Component {
   updateMatches = () =>
     this.setState({ matches: this.mediaQueryList.matches })
 
+  static camelCase(...parts) {
+    return parts.map(function(part, index) {
+      if(index === 0 || !part.length)
+        return part;
+      
+      return part.charAt(0).toUpperCase() + part.slice(1)
+    })
+    .join('')
+  }
+
   handleMockedMedia = (query) => {
     this.mockedMediaMatch = true
     const mockedMedia = this.context.mockedMedia
@@ -36,12 +46,14 @@ class Media extends React.Component {
     features.forEach((feature) => {
       const value = mockedMedia[feature]
 
-      let min = query['min' + feature],
+      const minFeature = Media.camelCase('min', feature),
+        maxFeature = Media.camelCase('max', feature),
+        min = query[minFeature],
         exact = query[feature],
-        max = query['max' + feature]
+        max = query[maxFeature]
 
       if(typeof min === 'number') {
-        mockedMediaProperties.push('min' + feature)
+        mockedMediaProperties.push(minFeature)
         if(value < min)
           this.mockedMediaMatch = false
       }
@@ -53,7 +65,7 @@ class Media extends React.Component {
       }
 
       if(typeof max === 'number') {
-        mockedMediaProperties.push('max' + feature)
+        mockedMediaProperties.push(maxFeature)
         if(value > max) 
           this.mockedMediaMatch = false
       }
@@ -64,7 +76,7 @@ class Media extends React.Component {
 
     Object.keys(query)
     .forEach(function(feature) {
-      if(mockedMediaProperties.includes(feature))
+      if(mockedMediaProperties.indexOf(feature) !== -1)
         delete rtnQuery[feature]
     })
 

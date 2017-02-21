@@ -12,12 +12,15 @@ describe('A <MediaMock>', () => {
 
   describe('with a mockedMedia that is different from the browser and a child <Media>', () => {
     const mockedMedia = {
-      width: window.innerWidth + 1
+      width: window.innerWidth + 2
     }
 
     describe('with a object query that', () => {
-      describe('matches the mockedMedia', () => {
-        const query = mockedMedia
+      describe('with a range that matches the mockedMedia exactly', () => {
+        const query = {
+          maxWidth: mockedMedia.width,
+          minWidth: mockedMedia.width
+        }
           
         describe('but not the browser', () => {
           it('renders its child', () => {
@@ -38,9 +41,9 @@ describe('A <MediaMock>', () => {
 
       describe('does not match the mockedMedia', () => {
         const query = {
-          ...mockedMedia
+          maxWidth: mockedMedia.width - 1
+
         }
-        --query.width
 
         describe('and ignores that it matches the browser', () => {
           it('does not render its child', () => {
